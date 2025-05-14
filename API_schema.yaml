@@ -1,0 +1,85 @@
+openapi: 3.1.1
+info:
+  title: YaCy Search API
+  description: |
+    API for searching indexed content using YaCy, as used in Bot-NUHS Search.
+    This schema describes the /yacysearch.json endpoint with the parameters and response structure
+    as implemented in your frontend code.
+  version: "1.0.0"
+servers:
+  - url: https://jinxin.bot-alex.com
+paths:
+  /yacysearch.json:
+    get:
+      summary: Search indexed content
+      description: >
+        Returns search results for a given query, restricted to a specific site if desired.
+        The query parameter supports the `site:` operator for domain restriction.
+      parameters:
+        - name: query
+          in: query
+          required: true
+          description: The search query. You can use `site:domain.com` to restrict results.
+          schema:
+            type: string
+        - name: maximumRecords
+          in: query
+          required: false
+          description: Maximum number of results to return.
+          schema:
+            type: integer
+            default: 10
+        - name: resource
+          in: query
+          required: false
+          description: Resource scope for the search (e.g., 'local').
+          schema:
+            type: string
+            default: local
+        - name: nav
+          in: query
+          required: false
+          description: Navigation mode (e.g., 'none').
+          schema:
+            type: string
+            default: none
+      responses:
+        '200':
+          description: Successful search response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  channels:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        items:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              title:
+                                type: string
+                                description: Title of the result
+                              link:
+                                type: string
+                                format: uri
+                                description: URL of the result
+                              description:
+                                type: string
+                                description: Description or snippet of the result
+                              snippet:
+                                type: string
+                                description: Alternative snippet of the result
+                              pubDate:
+                                type: string
+                                format: date-time
+                                description: Publication date
+        '400':
+          description: Bad request (missing or invalid parameters)
+        '500':
+          description: Internal server error
+components: {}
